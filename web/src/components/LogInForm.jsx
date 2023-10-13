@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 
 export default function LogInForm({ setModalLogIn }) {
     const [email, setEmail] = useState('');
@@ -9,12 +10,20 @@ export default function LogInForm({ setModalLogIn }) {
         e.preventDefault();
 
         try {
-            await axios.post('http://localhost:3000/log-in', {
+            const response = await axios.post('http://localhost:3000/log-in', {
                 email: email,
                 password: password
             });
+            console.log(response)
+            if (response.status >= 200 && response.status < 300) {
+                toast(response.data.message)
+                setModalLogIn(false)
+            } else {
+                toast(response.data.message)
+            }
         } catch (error) {
             console.error('Error Logging in', error)
+            toast(error.message)
         }
     }
 

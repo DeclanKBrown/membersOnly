@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import axios from 'axios';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 
 export default function SignUpForm({ setModaSignUp }) {
     const [fields, setFields] = useState({
@@ -27,13 +27,14 @@ export default function SignUpForm({ setModaSignUp }) {
                 password: fields.password,
                 confirmPassword: fields.confirmPassword,
             })
+            console.log(response)
             if (response.status >= 200 && response.status < 300) {
                 toast('Success')
                 setModaSignUp(false)
             }
         } catch (error) {
             console.error('Error Signing Up', error)
-            toast(error.message)
+            toast(error.response.data.message)
         }
     }
 

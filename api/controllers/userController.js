@@ -3,19 +3,24 @@ const { body, validationResult } = require('express-validator');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt');
+const jwt = require("jsonwebtoken");
 
 const User = require('../models/user')
 
 passport.use(
-    new LocalStrategy(async (username, password, done) => {
+    new LocalStrategy(async (email, password, done) => {
       try {
-        const user = await User.findOne({ username: username });
+        const user = await User.findOne({ email: email });
         if (!user) {
           return done(null, false, { message: "Incorrect username" });
         };
-        if (user.password !== password) {
+
+        const isPasswordMatch = await bcrypt.compare(password, user.password);
+
+        if (!isPasswordMatch) {
           return done(null, false, { message: "Incorrect password" });
         };
+
         return done(null, user);
       } catch(err) {
         return done(err);
@@ -89,10 +94,57 @@ exports.sign_up = [
 ];
   
 exports.log_in = asyncHandler(async(req, res, next) => {
-    passport.authenticate("local", {
-        successRedirect: "/",
-        failureRedirect: "/"
+    User.findOne({ email: req.body.email })
+
+    // if email exists
+    .then((user) => {
+      // compare the password entered and the hashed password found
+      bcrypt
+        .compare(req.body.password, user.password)
+
+        // if the passwords match
+        .then((passwordCheck) => {
+
+          // check if password matches
+          if(!passwordCheck) {
+            return res.status(400).send({
+              message: "Passwords does not match",
+              error,
+            });
+          }
+
+          //   create JWT token
+          const token = jwt.sign(
+            {
+              userId: user._id,
+              userEmail: user.email,
+            },
+            "RANDOM-TOKEN",
+            { expiresIn: "24h" }
+          );
+
+          //   return success response
+          res.status(200).send({
+            message: "Login Successful",
+            email: user.email,
+            token,
+          });
+        })
+        // catch error if password does not match
+        .catch((error) => {
+            res.status(400).send({
+            message: "Passwords does not match",
+            error,
+          });
+        });
     })
+    // catch error if email does not exist
+    .catch((e) => {
+        res.status(404).send({
+        message: "Email not found",
+        e,
+      });
+    });
 })
 
 exports.log_out = asyncHandler(async(req, res, next) => {
