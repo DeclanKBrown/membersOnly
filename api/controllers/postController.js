@@ -1,7 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const { body, validationResult } = require('express-validator');
 
-import Post, { findById, findByIdAndRemove } from '../models/post'
+const Post = require('../models/post')
 
 exports.all_posts = asyncHandler(async(req, res, next) => {
     const allPosts = await Post.find().sort({ date: 1 }).exec()

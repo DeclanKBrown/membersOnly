@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
+const cors = require('cors');
 require('dotenv').config();
 
 mongoose.set("strictQuery", false);
@@ -21,6 +22,14 @@ async function main() {
 var indexRouter = require('./routes/index');
 
 var app = express();
+
+const corsOptions = {
+  origin: 'http://localhost:5173',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+app.use(cors(corsOptions));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

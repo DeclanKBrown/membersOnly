@@ -5,18 +5,18 @@ const post_controller = require('../controllers/postController')
 const user_controller = require('../controllers/userController')
 
 /// POST ROUTES ///
-router.get('/', post_controller.all_posts)
+router.get('/all-posts', post_controller.all_posts)
 
-router.get('/create-post', post_controller.create_post)
+router.post('/create-post', post_controller.create_post)
 
-router.get('./delete-post', post_controller.delete_post)
+router.post('/delete-post', post_controller.delete_post)
 
 /// USER ROUTES ///
 
-app.post("/sign-up", user_controller.sign_up)
+router.post("/sign-up", user_controller.sign_up)
 
-app.post("/log-in", user_controller.log_in)
+router.post("/log-in", user_controller.log_in)
 
-app.post("/log-out", user_controller.out)
+router.post("/log-out", user_controller.log_out)
 
 module.exports = router
