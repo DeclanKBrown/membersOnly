@@ -41,7 +41,7 @@ export default function Home({ setModalMessage }) {
                         title={message.title}
                         text={message.text}
                         user={message.user}
-                        date={message.timestamp}
+                        date={message.timeStamp}
                     />
                 ))
             ) : (
