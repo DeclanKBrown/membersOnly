@@ -4,19 +4,22 @@ import LogIn from './components/LogInForm'
 import SignUp from './components/SignUpForm'
 import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
+import Message from './components/Message';
 
 export default function App() {
     const [modalLogIn, setModalLogIn] = useState(false)
-    const [modalSignUp, setModaSignUp] = useState(false)
+    const [modalSignUp, setModalSignUp] = useState(false)
+    const [modalMessage, setModalMessage] = useState(false)
 
     return (
         <>
-            <Layout setModalLogIn={setModalLogIn} setModaSignUp={setModaSignUp}>
+            <Layout setModalLogIn={setModalLogIn} setModaSignUp={setModalSignUp}>
                 <Toaster />
-                <Home />
+                <Home setModalMessage={setModalMessage} />
             </Layout>
+            {(modalMessage) && <Message setModalMessage={setModalMessage} />}
             {(modalLogIn) && <LogIn setModalLogIn={setModalLogIn} />}
-            {(modalSignUp) && <SignUp setModaSignUp={setModaSignUp} />}
+            {(modalSignUp) && <SignUp setModaSignUp={setModalSignUp} />}
         </>
     )
 }

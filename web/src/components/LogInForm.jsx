@@ -14,10 +14,11 @@ export default function LogInForm({ setModalLogIn }) {
                 email: email,
                 password: password
             });
-            console.log(response)
             if (response.status >= 200 && response.status < 300) {
                 toast(response.data.message)
                 setModalLogIn(false)
+                const token = response.data.token;
+                localStorage.setItem("token", token);
             } else {
                 toast(response.data.message)
             }
