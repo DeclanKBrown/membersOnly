@@ -10,8 +10,8 @@ export default function LogInForm({ setModalLogIn }) {
         e.preventDefault();
 
         try {
-            const response = await axios.post('http://localhost:3000/log-in', {
-                email: email,
+            const response = await axios.post('http://localhost:3000/login-local', {
+                username: email,
                 password: password
             });
             if (response.status >= 200 && response.status < 300) {
@@ -19,6 +19,7 @@ export default function LogInForm({ setModalLogIn }) {
                 setModalLogIn(false)
                 const token = response.data.token;
                 localStorage.setItem("token", token);
+                localStorage.setItem("user", JSON.stringify(response.data.user))
             } else {
                 toast(response.data.message)
             }

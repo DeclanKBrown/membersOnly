@@ -5,42 +5,49 @@ const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
 
-const User = require('../models/user')
+const User = require('../models/user');
 
 passport.use(
-    new LocalStrategy(async (email, password, done) => {
-      try {
-        const user = await User.findOne({ email: email });
-        if (!user) {
-          return done(null, false, { message: "Incorrect username" });
-        };
+  new LocalStrategy(async (email, password, done) => {
+    try {
+      const user = await User.findOne({ email: email }, {
+        email: 1,
+        name: 1,
+        password: 1
+      });
 
-        const isPasswordMatch = await bcrypt.compare(password, user.password);
-
-        if (!isPasswordMatch) {
-          return done(null, false, { message: "Incorrect password" });
-        };
-
-        return done(null, user);
-      } catch(err) {
-        return done(err);
+      if (user === null) {
+        return done(null, false, { message: "Incorrect username" });
       };
-    })
+
+      const isPasswordMatch = await bcrypt.compare(password, user.password);
+      user.password = undefined
+
+      if (isPasswordMatch === false) {
+        return done(null, false, { message: "Incorrect password" });
+      };
+
+      return done(null, user);
+    } catch(err) {
+      console.log('err', err)
+      return done(err);
+    };
+  })
 );
+  
 
 passport.serializeUser((user, done) => {
-    done(null, user.id);
+  done(null, user.id);
 });
-  
+
 passport.deserializeUser(async (id, done) => {
-    try {
-      const user = await User.findById(id);
-      done(null, user);
-    } catch(err) {
-      done(err);
-    };
+  try {
+    const user = await User.findById(id);
+    done(null, user);
+  } catch(err) {
+    done(err);
+  };
 });
-  
 exports.sign_up = [
       body('name')
           .trim()
@@ -84,7 +91,9 @@ exports.sign_up = [
               });
   
               await user.save(); 
-  
+              // this.log_in({
+              //   email: user.email
+              // })
               return res.status(201).json({ message: 'User created successfully' });
           } catch (error) {
               console.error(error);
@@ -92,59 +101,30 @@ exports.sign_up = [
           }
       }
 ];
-  
-exports.log_in = asyncHandler(async(req, res, next) => {
-    User.findOne({ email: req.body.email })
 
-    // if email exists
-    .then((user) => {
-      // compare the password entered and the hashed password found
-      bcrypt
-        .compare(req.body.password, user.password)
+exports.local_login = asyncHandler(async(req,res,next) => {
+    passport.authenticate("local", function(err, user, info, status) {
+      if (err) { return next(err) }
+      if (!user) { return res.status(status||200).json(info) }
+      const token = jwt.sign(
+        {
+          userId: user._id,
+          userEmail: user.email,
+        },
+        "RANDOM-TOKEN",
+        { expiresIn: "24h" }
+      );
 
-        // if the passwords match
-        .then((passwordCheck) => {
-
-          // check if password matches
-          if(!passwordCheck) {
-            return res.status(400).send({
-              message: "Passwords does not match",
-              error,
-            });
-          }
-
-          //   create JWT token
-          const token = jwt.sign(
-            {
-              userId: user._id,
-              userEmail: user.email,
-            },
-            "RANDOM-TOKEN",
-            { expiresIn: "24h" }
-          );
-
-          //   return success response
-          res.status(200).send({
-            message: "Login Successful",
-            email: user.email,
-            token,
-          });
-        })
-        // catch error if password does not match
-        .catch((error) => {
-            res.status(400).send({
-            message: "Passwords does not match",
-            error,
-          });
-        });
-    })
-    // catch error if email does not exist
-    .catch((e) => {
-        res.status(404).send({
-        message: "Email not found",
-        e,
+      //   return success response
+      return res.status(200).send({
+        message: "Login Successful",
+        user: {
+          email: user.email,
+          name: user.name
+        },
+        token,
       });
-    });
+    })(req,res,next)
 })
 
 exports.log_out = asyncHandler(async(req, res, next) => {

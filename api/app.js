@@ -44,6 +44,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({ secret: "cats", resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
+
 app.use(express.urlencoded({ extended: false }));
 
 app.use((req, res, next) => {
