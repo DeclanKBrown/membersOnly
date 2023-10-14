@@ -22,22 +22,24 @@ exports.create_post = [
     asyncHandler(async(req, res, next) => {
         const errors = validationResult(req)
 
-        const post = new Post({
-            title: req.body.title,
-            text: req.body.text,
-            user: locals.currentUser
-        })
-
-        if (!errors.isEmpty()) {
-            res.send({ errors: errors.array() })
-        } else {
-            await post.save()
-            res.redirect('/')
+        try {
+            const post = new Post({
+                title: req.body.title,
+                text: req.body.text,
+                user: req.body.id
+            })
+            if (!errors.isEmpty()) {
+                res.status(401).send({ errors: errors.array() })
+            } else {
+                await post.save()
+                res.status(200).json({ message: 'Success' })
+            }
+        } catch(err) {
+            res.status(500).json({ Message: err })
         }
     })
 ]
 
 exports.delete_post = asyncHandler(async(req, res, next) => {
     await findByIdAndRemove(req.params.id)
-    res.redirect('/')
 })

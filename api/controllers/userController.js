@@ -48,6 +48,7 @@ passport.deserializeUser(async (id, done) => {
     done(err);
   };
 });
+
 exports.sign_up = [
       body('name')
           .trim()
@@ -104,6 +105,7 @@ exports.sign_up = [
               return res.status(200).send({
                 message: "User Created Successfully",
                 user: {
+                  id: user.id,
                   email: user.email,
                   name: user.name
                 },
@@ -133,6 +135,7 @@ exports.local_login = asyncHandler(async(req,res,next) => {
       return res.status(200).send({
         message: "Login Successful",
         user: {
+          id: user.id,
           email: user.email,
           name: user.name
         },

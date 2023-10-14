@@ -9,7 +9,7 @@ export default function Layout({ children, setModalLogIn, setModalSignUp, setMod
             setModalSignUp={setModalSignUp}
             setModalLogOut={setModalLogOut}
         ></Header>
-            <main className='h-[calc(100vh-8rem)]'>{children}</main>
+            <main className='min-h-[calc(100vh-8rem)]'>{children}</main>
         <Footer></Footer>
         </>
     )

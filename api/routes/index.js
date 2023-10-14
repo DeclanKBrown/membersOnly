@@ -3,7 +3,6 @@ var router = express.Router();
 
 const post_controller = require('../controllers/postController')
 const user_controller = require('../controllers/userController');
-const passport = require('passport');
 
 /// POST ROUTES ///
 router.get('/all-posts', post_controller.all_posts)
