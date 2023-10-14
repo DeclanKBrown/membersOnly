@@ -12,6 +12,7 @@ export default function App() {
     const [modalLogOut, setModalLogOut] = useState(false)
     const [modalSignUp, setModalSignUp] = useState(false)
     const [modalMessage, setModalMessage] = useState(false)
+    const [newMessage, setNewMessage] = useState(false)
 
     return (
         <>
@@ -19,14 +20,15 @@ export default function App() {
                 setModalLogIn={setModalLogIn} 
                 setModalLogOut={setModalLogOut}
                 setModalSignUp={setModalSignUp} 
+                setNewMessage={setNewMessage}
             >
             <Toaster />
-                <Home setModalMessage={setModalMessage} />
+                <Home setModalMessage={setModalMessage} newMessage={newMessage} setNewMessage={setNewMessage} />
             </Layout>
             {(modalLogIn) && <LogIn setModalLogIn={setModalLogIn} />}
             {(modalSignUp) && <SignUp setModalSignUp={setModalSignUp} />}
             {(modalLogOut) && <LogOut setModalLogOut={setModalLogOut} />}
-            {(modalMessage) && <Message setModalMessage={setModalMessage} />}
+            {(modalMessage) && <Message setModalMessage={setModalMessage} setNewMessage={setNewMessage} />}
         </>
     )
 }

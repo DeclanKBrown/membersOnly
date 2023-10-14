@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Message from '../components/Message';
 
-export default function Home({ setModalMessage }) {
+export default function Home({ setModalMessage, newMessage, setNewMessage }) {
     const [messages, setMessages] = useState([])
 
     useEffect(() => {
@@ -16,7 +16,9 @@ export default function Home({ setModalMessage }) {
         };
 
         fetchData();
-    }, [setModalMessage]);
+    }, [newMessage]);
+
+    setNewMessage(false)
 
     const [userDetails, setUserDetails] = useState(null)
     const userStorage = localStorage.getItem('user')

@@ -2,7 +2,7 @@ import { useState } from "react"
 import axios from "axios"
 import toast from "react-hot-toast"
 
-export default function MessageForm({ setModalMessage }) {
+export default function MessageForm({ setModalMessage, setNewMessage }) {
     const [fields, setFields] = useState({
         title: '',
         text: '',
@@ -27,6 +27,7 @@ export default function MessageForm({ setModalMessage }) {
             if (response.status === 200) {
                 toast('Success')
                 setModalMessage(false)
+                setNewMessage(true)
             } else {
                 console.error(response)
                 toast(response.message)
