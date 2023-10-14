@@ -17,7 +17,7 @@ passport.use(
       });
 
       if (user === null) {
-        return done(null, false, { message: "Incorrect username" });
+        return done(null, false, { message: "Incorrect email" });
       };
 
       const isPasswordMatch = await bcrypt.compare(password, user.password);
@@ -91,10 +91,24 @@ exports.sign_up = [
               });
   
               await user.save(); 
-              // this.log_in({
-              //   email: user.email
-              // })
-              return res.status(201).json({ message: 'User created successfully' });
+
+              const token = jwt.sign(
+                {
+                  userId: user._id,
+                  userEmail: user.email,
+                },
+                "RANDOM-TOKEN",
+                { expiresIn: "24h" }
+              );
+
+              return res.status(200).send({
+                message: "User Created Successfully",
+                user: {
+                  email: user.email,
+                  name: user.name
+                },
+                token,
+              });
           } catch (error) {
               console.error(error);
               return res.status(500).json({ message: 'Internal server error' });
@@ -105,7 +119,7 @@ exports.sign_up = [
 exports.local_login = asyncHandler(async(req,res,next) => {
     passport.authenticate("local", function(err, user, info, status) {
       if (err) { return next(err) }
-      if (!user) { return res.status(status||200).json(info) }
+      if (!user) { return res.status(status).json(info) }
       const token = jwt.sign(
         {
           userId: user._id,
@@ -132,6 +146,6 @@ exports.log_out = asyncHandler(async(req, res, next) => {
         if (err) {
           return next(err);
         }
-        res.redirect("/");
+        res.json({ message: 'successfully logged out'})
     });
 });

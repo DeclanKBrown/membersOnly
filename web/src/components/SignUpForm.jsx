@@ -27,10 +27,12 @@ export default function SignUpForm({ setModalSignUp }) {
                 password: fields.password,
                 confirmPassword: fields.confirmPassword,
             })
-            console.log(response)
             if (response.status >= 200 && response.status < 300) {
                 toast('Success')
                 setModalSignUp(false)
+                const token = response.data.token;
+                localStorage.setItem("token", token);
+                localStorage.setItem("user", JSON.stringify(response.data.user))
             }
         } catch (error) {
             console.error('Error Signing Up', error)

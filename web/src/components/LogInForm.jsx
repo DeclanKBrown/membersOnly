@@ -14,18 +14,18 @@ export default function LogInForm({ setModalLogIn }) {
                 username: email,
                 password: password
             });
-            if (response.status >= 200 && response.status < 300) {
+            if (response.status === 200) {
                 toast(response.data.message)
                 setModalLogIn(false)
                 const token = response.data.token;
                 localStorage.setItem("token", token);
                 localStorage.setItem("user", JSON.stringify(response.data.user))
             } else {
-                toast(response.data.message)
+                toast(response.response.data.message)
             }
         } catch (error) {
             console.error('Error Logging in', error)
-            toast(error.message)
+            toast(error.response.data.message)
         }
     }
 

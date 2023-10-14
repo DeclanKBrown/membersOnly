@@ -16,8 +16,6 @@ router.post('/delete-post', post_controller.delete_post)
 
 router.post("/sign-up", user_controller.sign_up)
 
-// router.post("/log-in", user_controller.log_in)
-
 router.post("/login-local", user_controller.local_login)
 
 router.post("/log-out", user_controller.log_out)
